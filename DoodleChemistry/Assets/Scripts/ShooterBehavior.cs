@@ -11,11 +11,13 @@ public class ShooterBehavior : MonoBehaviour
     [SerializeField]
     private GameObject elementBall;
     [SerializeField]
-    Element curElement;
+    private Element curElement;
     [SerializeField]
     private float magnitude;
 
     public bool isFirable;
+
+    private GameObject curBall;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,6 +29,7 @@ public class ShooterBehavior : MonoBehaviour
     void Update()
     {
         HandleRotation();
+        Shoot();
     }
 
     void HandleRotation()
@@ -43,10 +46,10 @@ public class ShooterBehavior : MonoBehaviour
         if(isFirable && Input.GetKeyDown(KeyCode.Space))
         {
             
-           GameObject tempObj =  Instantiate(elementBall, this.transform.position, Quaternion.Euler(this.transform.up));
-
-            tempObj.GetComponent<ElementBallBehavior>().element = curElement;
-            tempObj.GetComponent<ElementBallBehavior>().magnitude = magnitude;
+            curBall =  Instantiate(elementBall, this.transform.position, transform.rotation);
+            curBall.GetComponent<ElementBallBehavior>().impulse = this.transform.up;
+            curBall.GetComponent<ElementBallBehavior>().element = curElement;
+            curBall.GetComponent<ElementBallBehavior>().magnitude = magnitude;
 
             isFirable = false;
         }
