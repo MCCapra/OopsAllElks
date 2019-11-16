@@ -97,7 +97,7 @@ public class TargetNodeCreationTool : EditorTool
 
                             creatingNewNode = false;
                             break;
-                        case KeyCode.LeftBracket:
+                        case KeyCode.Alpha3:
                             if (nodePrefab != null)
                                 CreateNewNode(nodePrefab, (Vector2)toPos, 1);
                             else
@@ -105,7 +105,7 @@ public class TargetNodeCreationTool : EditorTool
 
                             creatingNewNode = false;
                             break;
-                        case KeyCode.RightBracket:
+                        case KeyCode.Alpha4:
                             if (nodePrefab != null)
                                 CreateNewNode(nodePrefab, (Vector2)toPos, 2);
                             else
