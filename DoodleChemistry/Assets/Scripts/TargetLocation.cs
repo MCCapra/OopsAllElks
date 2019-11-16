@@ -139,6 +139,10 @@ public class TargetLocation : MonoBehaviour
         {
             foreach (var node in connections)
             {
+                if(node == null)
+                {
+                    continue;
+                }
                 node.connections.Remove(this);
             }
         }
