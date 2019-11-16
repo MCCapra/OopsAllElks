@@ -21,12 +21,19 @@ public class ShooterBehavior : MonoBehaviour
     [SerializeField]
     private GameObject preview;
 
+    [SerializeField]
+    private Element[] launchElements; //Elements being fired by launcher
+
+    private int elementIndex; //Index of current element being fired
+
     public List<Sprite> elements;
     // Start is called before the first frame update
     void Start()
     {
         rot = 0;
         isFirable = true;
+        elementIndex = 0;
+        curElement = launchElements[elementIndex];
     }
 
     // Update is called once per frame
@@ -57,6 +64,12 @@ public class ShooterBehavior : MonoBehaviour
             curBall.GetComponent<ElementBallBehavior>().magnitude = magnitude;
             curBall.GetComponent<SpriteRenderer>().sprite = elements[(int)curElement];
             isFirable = false;
+            elementIndex++;
+            if(elementIndex >= launchElements.Length)
+            {
+                elementIndex = 0;
+            }
+            curElement = launchElements[elementIndex];
         }
     }
 
