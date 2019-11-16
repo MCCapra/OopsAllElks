@@ -6,8 +6,8 @@ using UnityEngine;
 public class TargetLocation : MonoBehaviour
 {
     [Header("Node Info")]
-    [SerializeField] private List<TargetLocation> connections;
-
+    [SerializeField] public List<TargetLocation> connections;
+    [SerializeField] private Element correctElement = Element.Carbon;
 
     private Transform capturedElement = null;
 
@@ -79,4 +79,15 @@ public class TargetLocation : MonoBehaviour
         capturedElement = null;
     }
 
+
+    private void OnDestroy()
+    {
+        if(connections.Count > 0)
+        {
+            foreach (var node in connections)
+            {
+                node.connections.Remove(this);
+            }
+        }
+    }
 }
