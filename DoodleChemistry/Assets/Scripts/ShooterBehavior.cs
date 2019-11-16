@@ -66,21 +66,32 @@ public class ShooterBehavior : MonoBehaviour
     {
         if(isFirable && Input.GetKeyDown(KeyCode.Space))
         {
-            
+            if (MusicManager.instance)
+                MusicManager.instance.PlaySoundEffect(1);
+
             curBall =  Instantiate(elementBall, new Vector3(this.transform.position.x, this.transform.position.y + 0.5f, this.transform.position.z), transform.rotation);
             curBall.GetComponent<ElementBallBehavior>().impulse = this.transform.up;
             curBall.GetComponent<ElementBallBehavior>().element = curElement;
             curBall.GetComponent<ElementBallBehavior>().magnitude = magnitude;
             curBall.GetComponent<SpriteRenderer>().sprite = elements[(int)curElement];
             isFirable = false;
-            elementIndex++;
-            if(elementIndex >= launchElements.Length)
-            {
-                elementIndex = 0;
-            }
-            curElement = launchElements[elementIndex];
-            text.GetComponent<TextMesh>().text = symbols[(int)curElement];
+            CycleElement();
         }
+        else if(Input.GetKeyDown(KeyCode.C))
+        {
+            CycleElement();
+        }
+    }
+
+    void CycleElement()
+    {
+        elementIndex++;
+        if (elementIndex >= launchElements.Length)
+        {
+            elementIndex = 0;
+        }
+        curElement = launchElements[elementIndex];
+        text.GetComponent<TextMesh>().text = symbols[(int)curElement];
     }
 
     void ChangeSprite()

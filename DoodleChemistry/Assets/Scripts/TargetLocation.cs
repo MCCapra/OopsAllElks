@@ -67,13 +67,17 @@ public class TargetLocation : MonoBehaviour
         Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
         if (!rb) return;
 
+
+        // play sound effects if ingame
+        if(MusicManager.instance)
+            MusicManager.instance.PlaySoundEffect(0);
+
+        // make the ball a child of this and freeze its rigidbody
         capturedElement = obj;
         capturedElement.parent = transform;
+        rb.simulated = false;
         ballElement = capturedElement.GetComponent<ElementBallBehavior>();
 
-        rb.simulated = false;
-
-        //capturedElement.localPosition = Vector3.zero;
         // initialize values for capturing ball to move into position
         originalCapturePos = capturedElement.localPosition;
         shouldCapture = true;

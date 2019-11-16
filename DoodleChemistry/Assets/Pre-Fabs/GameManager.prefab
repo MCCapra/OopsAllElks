@@ -47,3 +47,6 @@ MonoBehaviour:
     type: 3}
   connectionSprites: []
   nodes: []
+  winScreen: {fileID: 0}
+  moleculeCamPrefab: {fileID: 5170315349485917320, guid: bce02cecb5b8a0b4fb9aacef9d9ebd1d,
+    type: 3}

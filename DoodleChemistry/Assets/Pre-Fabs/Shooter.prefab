@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6771042801402792800}
   - component: {fileID: 8436171903749661275}
   - component: {fileID: 2478569788841459695}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TextObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -102,7 +102,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4600613052915242925}
   - component: {fileID: 2923553048691910172}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ShooterSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -182,7 +182,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4600613053289918547}
   - component: {fileID: 4600613053289918574}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Shooter
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -245,7 +245,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1384165113623589976}
   - component: {fileID: 511539879512124476}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BallSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

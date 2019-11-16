@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-
+    private bool won = false;
     [Header("Node Data")]
     [SerializeField] private GameObject connectorPrefab;
     [SerializeField] private Sprite[] connectionSprites;
@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Popup Hooks")]
     [SerializeField] private GameObject winScreen;
+    [SerializeField] private GameObject moleculeCamPrefab;
 
     // Start is called before the first frame update
     void Start()
@@ -73,11 +74,8 @@ public class GameManager : MonoBehaviour
             // show feedback on whether the solution is right or wrong
             if (IsCorrect())
             {
+                if(!won)
                 WinLevel();
-            }
-            else
-            {
-
             }
         }
 
@@ -85,7 +83,38 @@ public class GameManager : MonoBehaviour
 
     private void WinLevel()
     {
+        won = true;
+        SpawnMoleculeCam();
+        StartCoroutine(WinPopupWithDelay(0.5f));
+    }
+
+    IEnumerator WinPopupWithDelay(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
         winScreen.SetActive(true);
+    }
+
+    private void SpawnMoleculeCam()
+    {
+        Camera rCam = GameObject.Instantiate(moleculeCamPrefab).GetComponent<Camera>();
+        Vector3 targetPos = Vector3.zero;
+        Vector2 minPos = Vector2.positiveInfinity;
+        Vector2 maxPos = Vector2.negativeInfinity;
+        foreach (var node in nodes)
+        {
+            Vector2 position = node.transform.position;
+            targetPos += (Vector3)position;
+            if (minPos.x > (position.x - 1.0f)) minPos.x = position.x - 1.0f;
+            if (minPos.y > (position.y - 1.0f)) minPos.y = position.y - 1.0f;
+
+            if (maxPos.x < (position.x + 1.0f)) maxPos.x = position.x + 1.0f;
+            if (maxPos.y < (position.y + 1.0f)) maxPos.y = position.y + 1.0f;
+        }
+        targetPos = Vector2.Lerp(maxPos, minPos, 0.5f);
+        targetPos.z = -10f;
+
+        rCam.orthographicSize = Mathf.Max((maxPos.x - minPos.x),(maxPos.y - minPos.y)) - .25f;
+        rCam.transform.position = targetPos;
     }
 
     bool IsFilled()
