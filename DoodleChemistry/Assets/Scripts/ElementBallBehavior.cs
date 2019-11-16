@@ -6,6 +6,7 @@ public class ElementBallBehavior : MonoBehaviour
 {
     public float magnitude;
     public Vector3 impulse; //This is going to be the up vector of the launcher
+    public Element element;
     // Start is called before the first frame update
     void Start()
     {
