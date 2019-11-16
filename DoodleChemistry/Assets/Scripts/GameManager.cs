@@ -9,6 +9,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject connectorPrefab;
     [SerializeField] private Sprite[] connectionSprites;
     [SerializeField] private List<TargetLocation> nodes;
+
+    [Header("Popup Hooks")]
+    [SerializeField] private GameObject winScreen;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +28,7 @@ public class GameManager : MonoBehaviour
 
         // draw connections
         DrawConnectors(connectorPrefab, connectionSprites);
+        winScreen.SetActive(false);
     }
 
     void DrawConnectors(GameObject prefab, Sprite[] sprites)
@@ -37,7 +42,7 @@ public class GameManager : MonoBehaviour
 
                 if (drawnConnectors.Contains(c)) continue;
                 drawnConnectors.Add(c);
-                if(c.style >= sprites.Length)
+                if (c.style >= sprites.Length)
                 {
                     Debug.LogError("A node connection could not be built because it received an out-of-bounds sprite index.");
                     continue;
@@ -63,12 +68,12 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(IsFilled())
+        if (IsFilled())
         {
             // show feedback on whether the solution is right or wrong
             if (IsCorrect())
             {
-
+                WinLevel();
             }
             else
             {
@@ -78,7 +83,12 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public bool IsFilled()
+    private void WinLevel()
+    {
+        winScreen.SetActive(true);
+    }
+
+    bool IsFilled()
     {
         foreach (var node in nodes)
         {
@@ -88,7 +98,7 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
-    public bool IsCorrect()
+    bool IsCorrect()
     {
         foreach (var node in nodes)
         {
