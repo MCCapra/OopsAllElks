@@ -23,7 +23,7 @@ public class ElementBallBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        text.GetComponent<Transform>().rotation = Quaternion.Euler(0,0,0);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

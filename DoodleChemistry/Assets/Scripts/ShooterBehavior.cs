@@ -8,21 +8,29 @@ public class ShooterBehavior : MonoBehaviour
 {
     private float rot; //Current rotation of the object
     public float rotationSpeed;
+    public bool isFirable;
+
     [SerializeField]
     private GameObject elementBall;
+
     [SerializeField]
     private Element curElement;
+
     [SerializeField]
     private float magnitude;
+    [SerializeField]
+    private GameObject text;
 
-    public bool isFirable;
     [SerializeField]
     private GameObject curBall;
+
     [SerializeField]
     private GameObject preview;
 
     [SerializeField]
     private Element[] launchElements; //Elements being fired by launcher
+
+    private string[] symbols = { "Na", "Cl", "C", "O", "H", "Fe" };
 
     private int elementIndex; //Index of current element being fired
 
@@ -34,6 +42,7 @@ public class ShooterBehavior : MonoBehaviour
         isFirable = true;
         elementIndex = 0;
         curElement = launchElements[elementIndex];
+        text.GetComponent<TextMesh>().text = symbols[(int)curElement];
     }
 
     // Update is called once per frame
@@ -70,6 +79,7 @@ public class ShooterBehavior : MonoBehaviour
                 elementIndex = 0;
             }
             curElement = launchElements[elementIndex];
+            text.GetComponent<TextMesh>().text = symbols[(int)curElement];
         }
     }
 
