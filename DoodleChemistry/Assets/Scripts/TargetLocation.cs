@@ -6,9 +6,12 @@ using UnityEngine;
 public class TargetLocation : MonoBehaviour
 {
     [Header("Node Info")]
-    [SerializeField] public List<TargetLocation> connections;
+    [SerializeField] public List<TargetLocation> connections = new List<TargetLocation>();
+    private List<int> styles = new List<int>();
+    public List<Connector> connectionStyle = new List<Connector>();
     [SerializeField] private Element correctElement = Element.Carbon;
 
+    private ElementBallBehavior ballElement = null;
     private Transform capturedElement = null;
     [SerializeField] private GameObject shooter;
 
@@ -66,6 +69,7 @@ public class TargetLocation : MonoBehaviour
 
         capturedElement = obj;
         capturedElement.parent = transform;
+        ballElement = capturedElement.GetComponent<ElementBallBehavior>();
 
         rb.simulated = false;
 
@@ -80,9 +84,51 @@ public class TargetLocation : MonoBehaviour
     {
         GameObject.Destroy(capturedElement.gameObject);
         capturedElement = null;
+        ballElement = null;
+    }
+
+    public void AddLink(TargetLocation node, int style = 0)
+    {
+        if (connections.Contains(node) || node.connections.Contains(this)) return;
+
+        connections.Add(node);
+        node.connections.Add(this);
+        styles.Add(style);
+        node.styles.Add(style);
+
+        var c = new Connector(style);
+        connectionStyle.Add(c);
+        node.connectionStyle.Add(c);
+    }
+
+    private void GenerateConnectors()
+    {
+        foreach (var node in connections)
+        {
+            var c = new Connector(0);
+            connectionStyle.Add(c);
+            node.connectionStyle.Add(c);
+        }
+    }
+
+    public bool HasElement()
+    {
+        return (ballElement != null);
+    }
+
+    public bool IsCorrect()
+    {
+        return (ballElement != null && ballElement.element == correctElement);
+    }
+
+    [ExecuteInEditMode]
+    private void Awake()
+    {
+        return;
     }
 
 
+    [ExecuteInEditMode]
     private void OnDestroy()
     {
         if(connections.Count > 0)
@@ -93,4 +139,17 @@ public class TargetLocation : MonoBehaviour
             }
         }
     }
+
+    public Element CorrectElement { get { return correctElement; } }
+
+}
+
+[System.Serializable]
+public class Connector
+{
+    public Connector(int s=0)
+    {
+        style = s;
+    }
+    public int style = 0;
 }
