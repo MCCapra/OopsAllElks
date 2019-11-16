@@ -2,36 +2,45 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(CircleCollider2D))]
 public class TargetLocation : MonoBehaviour
 {
+    [Header("Node Info")]
+    [SerializeField] private List<TargetLocation> connections;
 
 
     private Transform capturedElement = null;
 
     private bool shouldCapture = false; // whether the "animation" type stuff should occur
     private float timeSinceCapture = 0.0f;
+    private Vector3 originalCapturePos = Vector3.zero;
     [SerializeField] private AnimationCurve capturePath;
+
+    private void Start()
+    {
+        GetComponent<CircleCollider2D>().isTrigger = true;
+    }
+
     private void Update()
     {
-        //if (capturedElement)
-        //{
-        //    if (shouldCapture)
-        //    {
-        //        // move the captured bit closer based on path
-        //        timeSinceCapture += Time.deltaTime;
-        //        float lerpAmt = capturePath.Evaluate(timeSinceCapture);
-        //        Vector3 loc = capturedElement.localPosition;
-        //        capturedElement.localPosition = Vector3.Lerp(loc, Vector3.zero, lerpAmt);
+        if (capturedElement)
+        {
+            if (shouldCapture)
+            {
+                // move the captured bit closer based on path
+                timeSinceCapture += Time.deltaTime;
+                float lerpAmt = capturePath.Evaluate(timeSinceCapture);
+                capturedElement.localPosition = Vector3.LerpUnclamped(originalCapturePos, Vector3.zero, lerpAmt);
 
-        //        // stop capturing if the object is close enough
-        //        if (lerpAmt >= 1.0f)
-        //        {
-        //            capturedElement.localPosition = Vector3.zero;
-        //            shouldCapture = false;
-        //        }
-        //    }
-        //}
+                // stop capturing if the object is close enough
+                if (timeSinceCapture >= capturePath.keys[capturePath.length-1].time)
+                {
+                    originalCapturePos = Vector3.zero;
+                    capturedElement.localPosition = Vector3.zero;
+                    shouldCapture = false;
+                }
+            }
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -57,10 +66,11 @@ public class TargetLocation : MonoBehaviour
 
         rb.simulated = false;
 
-        capturedElement.localPosition = Vector3.zero;
+        //capturedElement.localPosition = Vector3.zero;
         // initialize values for capturing ball to move into position
-        //shouldCapture = true;
-        //timeSinceCapture = 0.0f;
+        originalCapturePos = capturedElement.localPosition;
+        shouldCapture = true;
+        timeSinceCapture = 0.0f;
     }
 
     private void ClearBall()
