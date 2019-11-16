@@ -13,11 +13,24 @@ public class TargetNodeCreationTool : EditorTool
 
     private static bool creatingNewNode;
     private static TargetLocation selectedNode = null;
+
+    [SerializeField] private Texture2D icon;
+    private GUIContent iconContent;
+
     private void OnEnable()
     {
+        iconContent = new GUIContent()
+        {
+            image = icon,
+            text = "Node Connection Tool",
+            tooltip = "Allows connection of multiple nodes."
+        };
+
         creatingNewNode = false;
         nodePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Pre-Fabs/Target.prefab");
     }
+
+    public override GUIContent toolbarIcon => iconContent;
 
     public override void OnToolGUI(EditorWindow window)
     {
