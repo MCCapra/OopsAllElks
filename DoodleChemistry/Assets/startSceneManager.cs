@@ -15,4 +15,9 @@ public class startSceneManager : MonoBehaviour
     {
         SceneManager.LoadScene("Level 0");
     }
+
+    public void Quit()
+    {
+        Application.Quit();
+    }
 }
