@@ -7,14 +7,16 @@ using UnityEditor.EditorTools;
 [EditorTool("Node Adder", typeof(TargetLocation))]
 public class TargetNodeCreationTool : EditorTool
 {
-    //[Range(0.1f,1.0f)]
-    public static float handleSize = 0.1f;
+    [Range(0.1f, 0.5f)]
+    public float handleSize = 0.1f;
+    public GameObject nodePrefab = null;
 
     private static bool creatingNewNode;
     private static TargetLocation selectedNode = null;
     private void OnEnable()
     {
         creatingNewNode = false;
+        nodePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Pre-Fabs/Target.prefab");
     }
 
     public override void OnToolGUI(EditorWindow window)
@@ -29,9 +31,15 @@ public class TargetNodeCreationTool : EditorTool
             using (new Handles.DrawingScope(drawColor))
             {
                 // draw button to select active node
-                if (Handles.Button(node.transform.position, Quaternion.identity, handleSize, handleSize, Handles.SphereHandleCap))
+                if (Handles.Button(node.transform.position, Quaternion.identity, handleSize, handleSize, Handles.CircleHandleCap))
                 {
-                    creatingNewNode = (selectedNode == node);
+                    bool isSelected = (selectedNode == node);
+                    if (!isSelected && creatingNewNode)
+                    {
+                        LinkNodes(selectedNode, node);
+                    }
+
+                    creatingNewNode = isSelected;
                     selectedNode = node;
                 }
 
@@ -40,8 +48,8 @@ public class TargetNodeCreationTool : EditorTool
                 {
                     foreach (var obj in node.connections)
                     {
-                        if(obj != null)
-                        Handles.DrawLine(node.transform.position, obj.transform.position);
+                        if (obj != null)
+                            Handles.DrawLine(node.transform.position, obj.transform.position);
                     }
                 }
             }
@@ -51,42 +59,93 @@ public class TargetNodeCreationTool : EditorTool
         if (creatingNewNode)
         {
             Vector3 fromPos = selectedNode.transform.position;
-            Vector3 toPos = (Vector2)(Vector3.ProjectOnPlane(Camera.current.ScreenToWorldPoint(Input.mousePosition),Vector3.forward));
+            Vector3 toPos = SceneView.currentDrawingSceneView.camera.ScreenToWorldPoint(Event.current.mousePosition);
+            toPos.y = -(toPos.y - (2 * SceneView.currentDrawingSceneView.camera.transform.position.y));
 
-            Debug.Log(toPos.z);
             using (new Handles.DrawingScope(Color.yellow))
             {
-                Handles.DrawDottedLine(fromPos, toPos,100);
+                Handles.DrawLine(fromPos, toPos);
             }
 
             // check mouse input state
             Event e = Event.current;
             switch (e.type)
             {
-                case EventType.MouseDown:
-                    if (e.button == 0)
+                case EventType.KeyDown:
+                    switch (e.keyCode)
                     {
-                            CreateNewNode(selectedNode.gameObject, (Vector2)toPos);
+                        case KeyCode.Space:
+                            {
+                                if (nodePrefab != null)
+                                    CreateNewNode(nodePrefab, (Vector2)toPos);
+                                else
+                                    Debug.LogError("No Node Prefab is set. Go to Window->General->Active Tool to set one.");
+
+                                creatingNewNode = false;
+                                break;
+                            }
+                        case KeyCode.Escape:
+                            {
+                                creatingNewNode = false;
+                                break;
+                            }
+                        case KeyCode.Alpha1:
+                            if (nodePrefab != null)
+                                CreateNewNode(nodePrefab, (Vector2)toPos, 0);
+                            else
+                                Debug.LogError("No Node Prefab is set. Go to Window->General->Active Tool to set one.");
 
                             creatingNewNode = false;
+                            break;
+                        case KeyCode.LeftBracket:
+                            if (nodePrefab != null)
+                                CreateNewNode(nodePrefab, (Vector2)toPos, 1);
+                            else
+                                Debug.LogError("No Node Prefab is set. Go to Window->General->Active Tool to set one.");
+
+                            creatingNewNode = false;
+                            break;
+                        case KeyCode.RightBracket:
+                            if (nodePrefab != null)
+                                CreateNewNode(nodePrefab, (Vector2)toPos, 2);
+                            else
+                                Debug.LogError("No Node Prefab is set. Go to Window->General->Active Tool to set one.");
+
+                            creatingNewNode = false;
+                            break;
                     }
                     break;
 
             }
         }
+        if (Event.current.type == EventType.KeyDown)
+        {
+            if (Event.current.keyCode == KeyCode.BackQuote)
+                foreach (var node in nodes)
+                {
+                    node.gameObject.name = "Node_" + node.CorrectElement.ToString();
+                }
+        }
     }
 
-    private void CreateNewNode(GameObject prefab, Vector2 location)
+    private void CreateNewNode(GameObject prefab, Vector2 location, int style = 0)
     {
+        // create a new node identical to the first one
         GameObject obj = GameObject.Instantiate(prefab, location, Quaternion.identity);
         TargetLocation newNode = obj.GetComponent<TargetLocation>();
+        obj.name = selectedNode.gameObject.name;
 
         // clear connections for the new node to 0
         newNode.connections.Clear();
 
         // register connection
-        newNode.connections.Add(selectedNode);
-        selectedNode.connections.Add(newNode);
+        LinkNodes(newNode, selectedNode, style);
     }
 
+    private void LinkNodes(TargetLocation n1, TargetLocation n2, int style = 0)
+    {
+        if (n1.connections.Contains(n2) || n2.connections.Contains(n1)) return;
+
+        n1.AddLink(n2, style);
+    }
 } // end of class
