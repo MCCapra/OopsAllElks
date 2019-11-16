@@ -10,6 +10,7 @@ public class TargetLocation : MonoBehaviour
     [SerializeField] private Element correctElement = Element.Carbon;
 
     private Transform capturedElement = null;
+    [SerializeField] private GameObject shooter;
 
     private bool shouldCapture = false; // whether the "animation" type stuff should occur
     private float timeSinceCapture = 0.0f;
@@ -19,6 +20,7 @@ public class TargetLocation : MonoBehaviour
     private void Start()
     {
         GetComponent<CircleCollider2D>().isTrigger = true;
+        shooter = GameObject.Find("Shooter");
     }
 
     private void Update()
@@ -53,6 +55,7 @@ public class TargetLocation : MonoBehaviour
                 ClearBall();
             }
             CaptureBall(collision.transform);
+            shooter.GetComponent<ShooterBehavior>().isFirable = true;
         }
     }
 

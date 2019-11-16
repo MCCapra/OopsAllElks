@@ -16,8 +16,12 @@ public class ShooterBehavior : MonoBehaviour
     private float magnitude;
 
     public bool isFirable;
-
+    [SerializeField]
     private GameObject curBall;
+    [SerializeField]
+    private GameObject preview;
+
+    public List<Sprite> elements;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,6 +34,7 @@ public class ShooterBehavior : MonoBehaviour
     {
         HandleRotation();
         Shoot();
+        ChangeSprite();
     }
 
     void HandleRotation()
@@ -46,12 +51,17 @@ public class ShooterBehavior : MonoBehaviour
         if(isFirable && Input.GetKeyDown(KeyCode.Space))
         {
             
-            curBall =  Instantiate(elementBall, this.transform.position, transform.rotation);
+            curBall =  Instantiate(elementBall, new Vector3(this.transform.position.x, this.transform.position.y + 0.5f, this.transform.position.z), transform.rotation);
             curBall.GetComponent<ElementBallBehavior>().impulse = this.transform.up;
             curBall.GetComponent<ElementBallBehavior>().element = curElement;
             curBall.GetComponent<ElementBallBehavior>().magnitude = magnitude;
-
+            curBall.GetComponent<SpriteRenderer>().sprite = elements[(int)curElement];
             isFirable = false;
         }
+    }
+
+    void ChangeSprite()
+    {
+        preview.GetComponent<SpriteRenderer>().sprite = elements[(int)curElement];
     }
 }
