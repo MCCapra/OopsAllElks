@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
         {
             for (int i = 0; i < node.connectionStyle.Count; i++)
             {
+                if (node.connections[i] == null) continue;
                 var c = node.connectionStyle[i];
 
                 if (drawnConnectors.Contains(c)) continue;
